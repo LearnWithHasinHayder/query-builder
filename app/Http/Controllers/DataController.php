@@ -70,7 +70,11 @@ class DataController extends Controller {
         return $invoices;
     }
 
-    function getInvoices() {
-        return view('invoices');
+    function getInvoices(Request $request) {
+        $user =$request->user();
+        $invoices = DB::table('invoices')
+            ->where('user_id', $user->id)
+            ->get();
+        return view('invoices', compact('invoices'));
     }
 }

@@ -9,7 +9,13 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    Get all invoices here. <a  href="/data">Check Data</a>
+                    @foreach($invoices as $invoice)
+                    <p class="mb-5">
+                        ID: {{ $invoice->id }}<br>
+                        Client: {{ $invoice->client }}<br>
+                        Total Price: {{ $invoice->total_price }}<br>
+                    </p>
+                    @endforeach
                 </div>
             </div>
         </div>
