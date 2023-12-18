@@ -25,11 +25,15 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     // Route::view('/invoices','invoices')->name('invoices');
     Route::get('/invoices', [DataController::class, 'getInvoices'])->name('invoices');
+    Route::get('/invoice/{id}', [DataController::class, 'getInvoice'])->name('invoice');
     Route::get('/data', [DataController::class, 'getData']);
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/books', [DataController::class, 'getBooks'])->name('books');
+Route::get('/createbook', [DataController::class, 'createBook'])->name('cb');
 
 
 require __DIR__.'/auth.php';

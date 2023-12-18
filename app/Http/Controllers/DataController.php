@@ -3,78 +3,79 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use DB;
+
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\Book;
+use App\Models\Author;
 
 
 class DataController extends Controller {
     function getData() {
-        $invoices = DB::table('invoices')->get();
+        $invoices = Invoice::limit(5)->get();
 
-        //first item
-        $invoices = DB::table('invoices')->first();
-        //2nd item
-        $invoices = DB::table('invoices')->where('id', 2)->first();
+        //paid invoices
+        $invoices = Invoice::where('paid',1)->get();
+        // $invoices = Invoice::wherePaid(1)->get();
+        // $invoices = Invoice::whereTotalPrice(792.67)->get();
+        $invoice = Invoice::find(1);
+        return $invoice;
 
-        //first 3 items
-        $invoices = DB::table('invoices')->limit(3)->get();
+        // $newInvoiceItem = new InvoiceItem();
+        // $newInvoiceItem->invoice_id = 1;
+        // $newInvoiceItem->title = "Item Y";
+        // $newInvoiceItem->total_price = 200;
+        // $newInvoiceItem->save();
+        // $invoice->items()->save($newInvoiceItem);
 
-        //user id = 11, paid = 1
-        $invoices = DB::table('invoices')->where('user_id', 11)->where('paid', 1)->get();
 
-        //how many paid invoice
-        // $invoices = DB::table('invoices')->where('paid', 1)->count();
+        // $invoice->client = "Kyra Robel II";
+        // $invoice->save();
 
-        //select id, user_id, paid, client
-        $invoices = DB::table('invoices')
-            ->select('id', 'user_id', 'paid', 'client', 'total_price')
-            ->where('paid', 1)
-            ->get();
+        // $newInvoice = new Invoice();
+        // $newInvoice->client = "Kyra Robel II";
+        // $newInvoice->paid = 1;
+        // $newInvoice->total_price = 792.67;
+        // $newInvoice->save();
 
-            //user id 11 maximum total _price
-        $max = DB::table('invoices')
-            ->where('user_id', 11)
-            ->where('paid', 1)
-            ->max('total_price');
+        //paid invoices and price > 1000
+        // $invoices = Invoice::where('paid',1)->where('total_price','<',1000)->get();
+        // return $invoices;
+        //total price of paid invoice
+        // $price = Invoice::where('paid',1)->sum('total_price');
+        // $invoiceItems = $invoice->items()->first();
 
-        //find invoice with max total_price
-        $invoices = DB::table('invoices')
-            ->where('total_price', $max)
-            ->first();
-
-        $invoices = DB::table('invoices')->get();
-
-        $invoices = DB::table('invoices')->where('user_id', 11)->where('paid', 1)->sum('total_price');
-
-        //SELECT id, client, total_price FROM invoices JOIN invoice_items ON invoices.id = invoice_items.invoice_id WHERE invoices.id = 1
-
-        $invoices = DB::table('invoices')
-            ->join('invoice_items', 'invoices.id', '=', 'invoice_items.invoice_id')
-            ->select('invoice_items.id as item_id','invoices.id', 'invoices.client', 'invoices.total_price', 'invoice_items.title', 'invoice_items.total_price as item_total_price')
-            ->where('invoices.id', 9)
-            ->get();
-
-        //raw query
-        $invoices = DB::select('SELECT  client, total_price FROM invoices WHERE id = ?', [9]);
-
-        //update
-        // $invoices = DB::table('invoices')
-        //     ->where('id', 9)
-        //     ->update(['client' => 'Allene Yundt I Jr.']);
-
-        //delete
-        // $invoices = DB::table('invoices')
-        //     ->where('id', 9)
-        //     ->delete();
-
-        $invoices = DB::table('invoices')->limit(3)->offset(3)->get();
-        return $invoices;
+        // $invoiceItem = InvoiceItem::find(1);
+        // $invoiceItem = InvoiceItem::with('invoice')->find(1);
+        // return $invoice;
     }
 
-    function getInvoices(Request $request) {
-        $user =$request->user();
-        $invoices = DB::table('invoices')
-            ->where('user_id', $user->id)
-            ->get();
-        return view('invoices', compact('invoices'));
+
+
+    function getBooks(){
+        //create a new book and attach to an author
+        // $author = Author::with('books')->find(2);
+        // return $author;
+
+        $book = Book::with('authors')->find(2);
+        $author = Author::find(5);
+        // $book->authors()->attach($author);
+        return $book;
+    }
+
+    function getInvoice($id){
+        $invoice = Invoice::findOrFail($id);
+        return $invoice;
+        // return $invoice->total_price;
+    }
+
+    function createBook(){
+        // $book = new Book();
+        // $book->title = "Book X";
+        // $book->save();
+        $book = Book::create([
+            'title' => 'Book Y'
+        ]);
+        return $book;
     }
 }
